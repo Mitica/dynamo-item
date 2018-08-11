@@ -27,3 +27,7 @@ export function getDynamoDataType(data: any): 'S' | 'N' {
     }
     throw new Error(`Invalid data type: ${type}`);
 }
+
+export function delay(ms: number) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}

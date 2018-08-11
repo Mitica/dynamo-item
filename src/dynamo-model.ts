@@ -1,4 +1,6 @@
 
+// const debug = require('debug')('dynamo-model');
+
 import {
     BaseDynamoModel,
     ModelDataType,
@@ -105,6 +107,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
 
         input.ReturnValues = 'NONE';
 
+        // debug('before create', input);
+
         await this.client.put(input).promise();
 
         return item;
@@ -133,7 +137,9 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
 
         const input = updateItemInput(params);
 
-        input.ReturnValues = 'ALL_NEW';
+        input.ReturnValues = 'ALL_OLD';
+
+        console.log('before update', input);
 
         const result = await this.client.update(input).promise();
 

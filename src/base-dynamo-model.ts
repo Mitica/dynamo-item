@@ -3,6 +3,7 @@ import DynamoDB = require('aws-sdk/clients/dynamodb');
 import { DynamoModelOptions, ProvisionedThroughput, DynamoModelIndex } from './options';
 import { SchemaMap, validate as joiSchemaValidate } from 'joi';
 import { createTableInput } from 'dynamo-input';
+import { delay } from './helpers';
 
 export type ModelDataKey = { [key: string]: number | string }
 export type ModelDataType = object
@@ -42,9 +43,10 @@ export class BaseDynamoModel<T extends ModelDataType> {
     async createTable(throughput?: ProvisionedThroughput) {
 
         const options = this.options;
+        const name = this.tableName();
 
         const input = createTableInput({
-            name: this.tableName(),
+            name,
             hashKey: options.hashKey,
             rangeKey: options.rangeKey,
             throughput: throughput,
@@ -52,12 +54,40 @@ export class BaseDynamoModel<T extends ModelDataType> {
         });
 
         await this.service.createTable(input).promise();
+
+        while (true) {
+            const status = await this.service.describeTable({ TableName: name }).promise();
+            if (!status.Table || !status.Table.TableStatus) {
+                throw new Error(`Table ${name} not found!`);
+            }
+            if (status.Table.TableStatus === 'CREATING') {
+                await delay(1000);
+            } else {
+                return;
+            }
+        }
     }
 
     async deleteTable() {
         await this.service.deleteTable({
             TableName: this.tableName(),
         });
+
+        while (true) {
+            try {
+                const status = await this.service.describeTable({ TableName: name }).promise();
+                if (!status.Table || !status.Table.TableStatus) {
+                    throw new Error(`Table ${name} not found!`);
+                }
+                if (status.Table.TableStatus === 'DELETING') {
+                    await delay(1000);
+                } else {
+                    return;
+                }
+            } catch (e) {
+                return;
+            }
+        }
     }
 
     protected convertToItemData(data: DynamoDB.AttributeMap): T {
