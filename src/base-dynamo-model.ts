@@ -1,7 +1,6 @@
 
 import DynamoDB = require('aws-sdk/clients/dynamodb');
 import { DynamoModelOptions, ProvisionedThroughput, DynamoModelIndex } from './options';
-import { SchemaMap, validate as joiSchemaValidate } from 'joi';
 import { createTableInput } from 'dynamo-input';
 import { delay } from './helpers';
 
@@ -14,13 +13,11 @@ export interface ModelUpdateData<T extends ModelDataType> {
 }
 
 export class BaseDynamoModel<T extends ModelDataType> {
-    protected fields: string[]
     protected service: DynamoDB
     protected tableName: () => string
     private indexHash: { [key: string]: DynamoModelIndex } = {}
 
     constructor(protected options: DynamoModelOptions, protected client: DynamoDB.DocumentClient) {
-        this.fields = Object.keys(options.schema);
         this.service = (<any>client).service;
 
         if (!this.service) {
@@ -90,44 +87,13 @@ export class BaseDynamoModel<T extends ModelDataType> {
         }
     }
 
-    protected convertToItemData(data: DynamoDB.AttributeMap): T {
-        return DynamoDB.Converter.unmarshall(data) as T;
-    }
-
-    protected convertFromItemData<T>(data: T): DynamoDB.AttributeMap {
-        return DynamoDB.Converter.marshall(data);
-    }
-
     protected beforeCreate(data: T): T {
-        // data = this.cleanItemData(data) as T;
-
-        const { error, value } = validateSchema<T>(this.options.schema, data);
-        if (error) {
-            throw error;
-        }
-        return value;
+        return data;
     }
 
     protected beforeUpdate(data: ModelUpdateData<T>): ModelUpdateData<T> {
-        // data = { ...data };
-        // data.item = this.cleanItemData(data.item);
-
-        const { error, value } = validateSchema<ModelUpdateData<T>>(this.options.updateSchema, data);
-        if (error) {
-            throw error;
-        }
-        return value;
+        return data;
     }
-
-    // protected cleanItemData(data: Partial<T>): Partial<T> {
-    //     data = Object.assign({}, data);
-    //     for (const prop of Object.keys(data)) {
-    //         if (this.fields.indexOf(prop) < 0) {
-    //             delete (<any>data)[prop];
-    //         }
-    //     }
-    //     return data;
-    // }
 
     protected formatKeyFromData(data: any): ModelDataKey {
         const key: ModelDataKey = {};
@@ -173,16 +139,4 @@ export class BaseDynamoModel<T extends ModelDataType> {
 
         return index.rangeKey.name;
     }
-}
-
-function validateSchema<T>(schema: SchemaMap, data: T) {
-    return joiSchemaValidate<T>(data, schema, {
-        allowUnknown: false,
-        abortEarly: true,
-        convert: true,
-        noDefaults: false,
-        presence: 'optional',
-        stripUnknown: false,
-        skipFunctions: false,
-    });
 }

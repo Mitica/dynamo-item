@@ -1,6 +1,5 @@
 
 export import DynamoDB = require('aws-sdk/clients/dynamodb');
-export import Joi = require('joi');
 
 export {
     DynamoModel,

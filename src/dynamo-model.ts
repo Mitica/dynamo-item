@@ -39,7 +39,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             return null;
         }
 
-        return this.convertToItemData(result.Item);
+        return result.Item as T;
     }
 
     async getItems(keys: KEY[], params?: DynamoModelReadParams): Promise<T[]> {
@@ -58,7 +58,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
 
         const items = result.Responses[tableName] || [];
 
-        return items.map(item => this.convertToItemData(item));
+        return items.map(item => item as T);
     }
 
     async put(item: T): Promise<T> {
@@ -75,7 +75,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             throw new Error(`Somethig goes wrong!`);
         }
 
-        return this.convertToItemData(result.Attributes);
+        return result.Attributes as T;
     }
 
     async delete(key: KEY): Promise<T | null> {
@@ -92,7 +92,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             return null;
         }
 
-        return this.convertToItemData(result.Attributes);
+        return result.Attributes as T;
     }
 
     async create(item: T): Promise<T> {
@@ -106,8 +106,6 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         });
 
         input.ReturnValues = 'NONE';
-
-        // debug('before create', input);
 
         await this.client.put(input).promise();
 
@@ -137,9 +135,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
 
         const input = updateItemInput(params);
 
-        input.ReturnValues = 'ALL_OLD';
-
-        console.log('before update', input);
+        input.ReturnValues = 'ALL_NEW';
 
         const result = await this.client.update(input).promise();
 
@@ -147,17 +143,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             throw new Error(`Somethig goes wrong!`);
         }
 
-        return this.convertToItemData(result.Attributes);
-    }
-
-    createOrUpdate(item: T): Promise<T> {
-        return this.create(item)
-            .catch(error => {
-                if (error.code === 'ConditionalCheckFailedException') {
-                    return this.update({ item });
-                }
-                return Promise.reject(error);
-            });
+        return result.Attributes as T;
     }
 
     async query(params: DynamoQueryParams): Promise<DynamoQueryResult<T>> {
@@ -192,7 +178,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         };
 
         if (result.Items) {
-            data.items = result.Items.map(item => this.convertToItemData(item));
+            data.items = result.Items.map(item => item as T);
         }
 
         return data;

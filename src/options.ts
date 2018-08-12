@@ -1,6 +1,4 @@
 
-import { SchemaMap } from 'joi';
-
 export type TableName = (() => string) | string;
 
 export interface DynamoModelOptions {
@@ -8,8 +6,6 @@ export interface DynamoModelOptions {
     tableName: TableName
     hashKey: DynamoModelKey
     rangeKey?: DynamoModelKey
-    schema: SchemaMap
-    updateSchema: SchemaMap
     indexes?: DynamoModelIndex[]
 }
 
