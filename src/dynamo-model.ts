@@ -117,21 +117,22 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
 
         const params: UpdateItemParams = {
             tableName: this.tableName(),
-            key: this.formatKeyFromData(data.item),
-            remove: data.delete as string[] | undefined
+            key: data.key,
+            remove: data.remove as string[] | undefined,
         };
 
-        const set: { [key: string]: UpdateExpressionSet } = {};
-        for (const key of Object.keys(data.item)) {
-            if (key === this.options.hashKey.name || this.options.rangeKey && this.options.rangeKey.name === key) {
-                continue;
+        if (data.set) {
+            const set: { [key: string]: UpdateExpressionSet } = {};
+            for (const key of Object.keys(data.set)) {
+                if (key === this.options.hashKey.name || this.options.rangeKey && this.options.rangeKey.name === key) {
+                    continue;
+                }
+                set[key] = {
+                    value: (<any>data.set)[key]
+                };
             }
-            set[key] = {
-                value: (<any>data.item)[key]
-            };
+            params.set = set;
         }
-
-        params.set = set;
 
         const input = updateItemInput(params);
 
@@ -169,6 +170,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             limit: params.limit,
             startKey: params.startKey,
             rangeKey,
+            order: params.order,
         });
 
         const result = await this.client.query(input).promise();
@@ -199,6 +201,7 @@ export interface DynamoQueryParams {
     limit?: number
     consistentRead?: boolean
     startKey?: { [key: string]: any }
+    order?: 'ASC' | 'DESC'
 }
 
 export type DynamoQueryRangeKey = {

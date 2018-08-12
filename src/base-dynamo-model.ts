@@ -8,8 +8,9 @@ export type ModelDataKey = { [key: string]: number | string }
 export type ModelDataType = object
 
 export interface ModelUpdateData<T extends ModelDataType> {
-    item: Partial<T>
-    delete?: (keyof T)[]
+    key: ModelDataKey
+    set?: Partial<T>
+    remove?: (keyof T)[]
 }
 
 export class BaseDynamoModel<T extends ModelDataType> {

@@ -42,7 +42,8 @@ test('hashKey model', async t => {
     await t.throws(model.create({ id: 1, title: 'Title 1' }), /The conditional request failed/);
 
     video1 = await model.update({
-        item: { id: 1, title: 'Title One' }
+        key: { id: 1 },
+        set: { title: 'Title One' }
     });
     t.is(video1.title, 'Title One');
 
@@ -52,7 +53,7 @@ test('hashKey model', async t => {
     t.is(videos[0].id, 1);
     t.deepEqual(videos[0], { id: 1 });
 
-    let video2 = await model.update({ item: { id: 2, title: 'Title 2' } });
+    let video2 = await model.update({ key: { id: 2 }, set: { title: 'Title 2' } });
 
     t.is(video2.id, 2);
     t.is(video2.title, 'Title 2');
