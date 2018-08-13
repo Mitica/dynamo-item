@@ -1,5 +1,5 @@
 
-// const debug = require('debug')('dynamo-model');
+const debug = require('debug')('dynamo-model');
 
 import {
     BaseDynamoModel,
@@ -69,13 +69,11 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             item: item,
         });
 
-        const result = await this.client.put(input).promise();
+        debug('putting item with params:', input);
 
-        if (!result.Attributes) {
-            throw new Error(`Somethig goes wrong!`);
-        }
+        await this.client.put(input).promise();
 
-        return result.Attributes as T;
+        return item;
     }
 
     async delete(key: KEY): Promise<T | null> {
@@ -85,6 +83,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         });
 
         input.ReturnValues = 'ALL_OLD';
+
+        debug('deleting item with params:', input);
 
         const result = await this.client.delete(input).promise();
 
@@ -106,6 +106,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         });
 
         input.ReturnValues = 'NONE';
+
+        debug('creating item with params:', input);
 
         await this.client.put(input).promise();
 
@@ -137,6 +139,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         const input = updateItemInput(params);
 
         input.ReturnValues = 'ALL_NEW';
+
+        debug('updating item with params:', input);
 
         const result = await this.client.update(input).promise();
 
@@ -172,6 +176,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             rangeKey,
             order: params.order,
         });
+
+        debug('query with params:', input);
 
         const result = await this.client.query(input).promise();
 
