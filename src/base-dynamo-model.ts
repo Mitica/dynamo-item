@@ -51,7 +51,15 @@ export class BaseDynamoModel<T extends ModelDataType> {
             indexes: options.indexes,
         });
 
-        await this.service.createTable(input).promise();
+        try {
+            await this.service.createTable(input).promise();
+        } catch (e) {
+            // resource exists
+            if (e.code === 'ResourceInUseException') {
+                return;
+            }
+            throw e;
+        }
 
         while (true) {
             const status = await this.service.describeTable({ TableName: name }).promise();
