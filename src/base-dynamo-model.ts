@@ -77,7 +77,7 @@ export class BaseDynamoModel<T extends ModelDataType> {
     async deleteTable() {
         await this.service.deleteTable({
             TableName: this.tableName(),
-        });
+        }).promise();
 
         while (true) {
             try {

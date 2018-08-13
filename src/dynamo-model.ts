@@ -76,6 +76,11 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         return item;
     }
 
+    /**
+     * Deletes an item by key.
+     * @param key Item key
+     * @returns Deleted item or null if no one exists with current key.
+     */
     async delete(key: KEY): Promise<T | null> {
         const input = deleteItemInput({
             tableName: this.tableName(),
@@ -95,6 +100,10 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         return result.Attributes as T;
     }
 
+    /**
+     * Creates a new item and throws if any exists with same key.
+     * @param item Item to create
+     */
     async create(item: T): Promise<T> {
         item = this.beforeCreate(item);
 
@@ -114,12 +123,17 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         return item;
     }
 
+    /**
+     * Updates an existing item and throws on not existing.
+     * @param data Update data
+     */
     async update(data: ModelUpdateData<T>): Promise<T> {
         data = this.beforeUpdate(data);
 
         const params: UpdateItemParams = {
             tableName: this.tableName(),
             key: data.key,
+            hashKeyName: this.options.hashKey.name,
             remove: data.remove as string[] | undefined,
         };
 

@@ -20,18 +20,28 @@ const client = new DynamoDB.DocumentClient({
     secretAccessKey: 'Key',
 });
 
-test('hashKey model', async t => {
-    const options: DynamoModelOptions = {
-        name: 'Videos',
-        tableName: 'Videos',
-        hashKey: {
-            name: 'id',
-            type: 'N'
-        },
-    };
+const options: DynamoModelOptions = {
+    name: 'Videos',
+    tableName: 'Videos',
+    hashKey: {
+        name: 'id',
+        type: 'N'
+    },
+};
 
-    const model = new DynamoModel<{ id: number }, { id: number, title: string }>(options, client);
+const model = new DynamoModel<{ id: number }, { id: number, title: string }>(options, client);
 
+test.serial('createTable', async t => {
+    await t.notThrows(model.createTable());
+    await t.notThrows(model.get({ id: 1 }));
+})
+
+test.serial('deleteTable', async t => {
+    await t.notThrows(model.deleteTable());
+    await t.throws(model.get({ id: 1 }), /non-existent table/, 'Table not deleted!');
+})
+
+test.serial('hashKey model', async t => {
     await t.notThrows(model.createTable());
 
     let video1 = await model.create({ id: 1, title: 'Title 1' });
@@ -53,7 +63,7 @@ test('hashKey model', async t => {
     t.is(videos[0].id, 1);
     t.deepEqual(videos[0], { id: 1 });
 
-    let video2 = await model.update({ key: { id: 2 }, set: { title: 'Title 2' } });
+    let video2 = await model.create({ id: 2, title: 'Title 2' });
 
     t.is(video2.id, 2);
     t.is(video2.title, 'Title 2');
