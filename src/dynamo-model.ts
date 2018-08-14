@@ -33,6 +33,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             attributes: params && params.attributes,
         });
 
+        debug('get params:', input);
+
         const result = await this.client.get(input).promise();
 
         if (!result.Item) {
@@ -49,6 +51,8 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
             keys,
             attributes: params && params.attributes,
         });
+
+        debug('getItems params:', input.RequestItems);
 
         const result = await this.client.batchGet(input).promise();
 
