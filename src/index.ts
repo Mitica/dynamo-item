@@ -6,6 +6,7 @@ export {
     DynamoQueryParams,
     DynamoQueryResult,
     DynamoModelReadParams,
+    DynamoQueryRangeKey,
 } from './dynamo-model';
 
 export {
