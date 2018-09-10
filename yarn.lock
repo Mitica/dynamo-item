@@ -985,6 +985,12 @@ duplexer3@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/duplexer3/-/duplexer3-0.1.4.tgz#ee01dd1cac0ed3cbc7fdbea37dc0a8f1ce002ce2"
 
+dynamo-input@^0.1.0:
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/dynamo-input/-/dynamo-input-0.1.0.tgz#8eea10336e554450d2b0b4d217b06952c859cbca"
+  dependencies:
+    aws-sdk "^2.286.2"
+
 dynamodb-local@^0.0.22:
   version "0.0.22"
   resolved "https://registry.yarnpkg.com/dynamodb-local/-/dynamodb-local-0.0.22.tgz#e5ccdd46b5206eab7a48e9d8bcfe10cc2b8a894f"
