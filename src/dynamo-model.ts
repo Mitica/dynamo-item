@@ -171,9 +171,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
 
     async query(params: DynamoQueryParams): Promise<DynamoQueryResult<T>> {
 
-        const options = this.options;
-
-        const rangeKey = options.rangeKey && params.rangeKey && {
+        const rangeKey = params.rangeKey && {
             name: this.getRangeKeyName(params.index),
             operation: params.rangeKey.operation,
             value: params.rangeKey.value,
