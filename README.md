@@ -1,5 +1,7 @@
 # dynamo-model
 
+RENAMED: [dynamo-item](dynamo-item).
+
 Simple DynamoDB data model.
 
 ## Changelog
