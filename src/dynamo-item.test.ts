@@ -1,9 +1,9 @@
 
 import test from 'ava';
 import { launch, stop } from 'dynamodb-local';
-import { DynamoModelOptions } from './options';
+import { DynamoItemOptions } from './options';
 import DynamoDB = require('aws-sdk/clients/dynamodb');
-import { DynamoModel } from './dynamo-model';
+import { DynamoItem } from './dynamo-item';
 
 test.before('start dynamo', async t => {
     await t.notThrows(launch(8000, null, ['-inMemory', '-sharedDb']));
@@ -20,7 +20,7 @@ const client = new DynamoDB.DocumentClient({
     secretAccessKey: 'Key',
 });
 
-const options: DynamoModelOptions = {
+const options: DynamoItemOptions = {
     name: 'Videos',
     tableName: 'Videos',
     hashKey: {
@@ -29,7 +29,7 @@ const options: DynamoModelOptions = {
     },
 };
 
-const model = new DynamoModel<{ id: number }, { id: number, title: string }>(options, client);
+const model = new DynamoItem<{ id: number }, { id: number, title: string }>(options, client);
 
 test.serial('createTable', async t => {
     await t.notThrows(model.createTable());

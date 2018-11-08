@@ -1,20 +1,20 @@
 
 export type TableName = (() => string) | string;
 
-export interface DynamoModelOptions {
+export interface DynamoItemOptions {
     name: string
     tableName: TableName
-    hashKey: DynamoModelKey
-    rangeKey?: DynamoModelKey
-    indexes?: DynamoModelIndex[]
+    hashKey: DynamoItemKey
+    rangeKey?: DynamoItemKey
+    indexes?: DynamoItemIndex[]
 }
 
-export type DynamoModelIndex = {
+export type DynamoItemIndex = {
     name: string
     type: 'LOCAL' | 'GLOBAL'
-    hashKey: DynamoModelKey
-    rangeKey?: DynamoModelKey
-    projection?: DynamoModelIndexProjection
+    hashKey: DynamoItemKey
+    rangeKey?: DynamoItemKey
+    projection?: DynamoItemIndexProjection
     throughput?: ProvisionedThroughput
 }
 
@@ -23,12 +23,12 @@ export type ProvisionedThroughput = {
     write: number
 }
 
-export type DynamoModelIndexProjection = {
+export type DynamoItemIndexProjection = {
     include?: string[]
     type: 'KEYS_ONLY' | 'INCLUDE' | 'ALL'
 }
 
-export type DynamoModelKey = {
+export type DynamoItemKey = {
     name: string
     type: 'S' | 'N'
 }

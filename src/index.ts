@@ -2,13 +2,13 @@
 // export import DynamoDB = require('aws-sdk/clients/dynamodb');
 
 export {
-    DynamoModel,
+    DynamoItem,
     DynamoQueryParams,
     DynamoQueryResult,
-    DynamoModelReadParams,
+    DynamoItemReadParams,
     DynamoQueryRangeKey,
-} from './dynamo-model';
+} from './dynamo-item';
 
 export {
-    ModelUpdateData,
-} from './base-dynamo-model';
+    ItemUpdateData,
+} from './base-dynamo-item';

@@ -1,9 +1,7 @@
-# dynamo-model
+# dynamo-item
 
-RENAMED: [dynamo-item](dynamo-item).
-
-Simple DynamoDB data model.
+Simple DynamoDB data access object.
 
 ## Changelog
 
-- v0.1.0 - 10.09.2018
+- v0.1.0 - 09.11.2018

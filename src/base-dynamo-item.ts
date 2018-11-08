@@ -1,24 +1,24 @@
 
 import DynamoDB = require('aws-sdk/clients/dynamodb');
-import { DynamoModelOptions, ProvisionedThroughput, DynamoModelIndex } from './options';
+import { DynamoItemOptions, ProvisionedThroughput, DynamoItemIndex } from './options';
 import { createTableInput } from 'dynamo-input';
 import { delay } from './helpers';
 
-export type ModelDataKey = { [key: string]: number | string }
-export type ModelDataType = object
+export type ItemKey = { [key: string]: number | string }
+export type ItemType = object
 
-export interface ModelUpdateData<T extends ModelDataType> {
-    key: ModelDataKey
+export interface ItemUpdateData<T extends ItemType> {
+    key: ItemKey
     set?: Partial<T>
     remove?: (keyof T)[]
 }
 
-export class BaseDynamoModel<T extends ModelDataType> {
+export class BaseDynamoItem<T extends ItemType> {
     protected service: DynamoDB
     protected tableName: () => string
-    private indexHash: { [key: string]: DynamoModelIndex } = {}
+    private indexHash: { [key: string]: DynamoItemIndex } = {}
 
-    constructor(protected options: DynamoModelOptions, protected client: DynamoDB.DocumentClient) {
+    constructor(protected options: DynamoItemOptions, protected client: DynamoDB.DocumentClient) {
         this.service = (<any>client).service;
 
         if (!this.service) {
@@ -75,8 +75,10 @@ export class BaseDynamoModel<T extends ModelDataType> {
     }
 
     async deleteTable() {
+        const name = this.tableName();
+
         await this.service.deleteTable({
-            TableName: this.tableName(),
+            TableName: name,
         }).promise();
 
         while (true) {
@@ -100,12 +102,12 @@ export class BaseDynamoModel<T extends ModelDataType> {
         return data;
     }
 
-    protected beforeUpdate(data: ModelUpdateData<T>): ModelUpdateData<T> {
+    protected beforeUpdate(data: ItemUpdateData<T>): ItemUpdateData<T> {
         return data;
     }
 
-    protected formatKeyFromData(data: any): ModelDataKey {
-        const key: ModelDataKey = {};
+    protected formatKeyFromData(data: any): ItemKey {
+        const key: ItemKey = {};
 
         const hashKey = this.options.hashKey;
         key[hashKey.name] = data[hashKey.name];

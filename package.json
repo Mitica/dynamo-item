@@ -1,7 +1,7 @@
 {
-  "name": "dynamo-model",
+  "name": "dynamo-item",
   "version": "0.1.0",
-  "description": "DynamoDB data model",
+  "description": "DynamoDB item",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
   "scripts": {
@@ -21,30 +21,31 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Mitica/dynamo-model.git"
+    "url": "git+https://github.com/Mitica/dynamo-item.git"
   },
   "keywords": [
     "dynamo",
     "dynamodb",
-    "data-model",
-    "model"
+    "dunamo-model",
+    "model",
+    "item"
   ],
   "author": "Dumitru Cantea",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Mitica/dynamo-model/issues"
+    "url": "https://github.com/Mitica/dynamo-item/issues"
   },
-  "homepage": "https://github.com/Mitica/dynamo-model#readme",
+  "homepage": "https://github.com/Mitica/dynamo-item#readme",
   "devDependencies": {
-    "@types/node": "latest",
-    "ava": "^0.23.0",
-    "debug": "^3.1.0",
+    "@types/node": "10.12.3",
+    "ava": "^0.25.0",
+    "debug": "^4.1.0",
     "dynamodb-local": "^0.0.22",
     "rimraf": "^2.6.2",
-    "typescript": "latest"
+    "typescript": "3.1.6"
   },
   "dependencies": {
-    "aws-sdk": "^2.286.2",
+    "aws-sdk": "^2.351.0",
     "dynamo-input": "^0.1.0"
   }
 }

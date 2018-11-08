@@ -1,12 +1,12 @@
 
-const debug = require('debug')('dynamo-model');
+const debug = require('debug')('dynamo-item');
 
 import {
-    BaseDynamoModel,
-    ModelDataType,
-    ModelUpdateData,
-    ModelDataKey,
-} from './base-dynamo-model';
+    BaseDynamoItem,
+    ItemType,
+    ItemUpdateData,
+    ItemKey,
+} from './base-dynamo-item';
 
 import {
     getItemInput,
@@ -20,13 +20,13 @@ import {
     UpdateExpressionSet,
 } from 'dynamo-input';
 
-export interface DynamoModelReadParams {
+export interface DynamoItemReadParams {
     attributes?: string[]
 }
 
-export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> extends BaseDynamoModel<T> {
+export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDynamoItem<T> {
 
-    async get(key: KEY, params?: DynamoModelReadParams): Promise<T | null> {
+    async get(key: KEY, params?: DynamoItemReadParams): Promise<T | null> {
         const input = getItemInput({
             tableName: this.tableName(),
             key,
@@ -44,7 +44,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
         return result.Item as T;
     }
 
-    async getItems(keys: KEY[], params?: DynamoModelReadParams): Promise<T[]> {
+    async getItems(keys: KEY[], params?: DynamoItemReadParams): Promise<T[]> {
         const tableName = this.tableName();
         const input = batchGetItemInput({
             tableName: tableName,
@@ -131,7 +131,7 @@ export class DynamoModel<KEY extends ModelDataKey, T extends ModelDataType> exte
      * Updates an existing item and throws on not existing.
      * @param data Update data
      */
-    async update(data: ModelUpdateData<T>): Promise<T> {
+    async update(data: ItemUpdateData<T>): Promise<T> {
         data = this.beforeUpdate(data);
 
         const params: UpdateItemParams = {
