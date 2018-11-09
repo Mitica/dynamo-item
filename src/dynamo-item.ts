@@ -41,7 +41,7 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
             return null;
         }
 
-        return result.Item as T;
+        return this.toExternItem(result.Item);
     }
 
     async getItems(keys: KEY[], params?: DynamoItemReadParams): Promise<T[]> {
@@ -62,7 +62,7 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
 
         const items = result.Responses[tableName] || [];
 
-        return items.map(item => item as T);
+        return items.map(item => this.toExternItem(item));
     }
 
     async put(item: T): Promise<T> {
@@ -77,7 +77,7 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
 
         await this.client.put(input).promise();
 
-        return item;
+        return this.toExternItem(item);
     }
 
     /**
@@ -101,7 +101,7 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
             return null;
         }
 
-        return result.Attributes as T;
+        return this.toExternItem(result.Attributes);
     }
 
     /**
@@ -124,7 +124,7 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
 
         await this.client.put(input).promise();
 
-        return item;
+        return this.toExternItem(item);
     }
 
     /**
@@ -166,7 +166,7 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
             throw new Error(`Somethig goes wrong!`);
         }
 
-        return result.Attributes as T;
+        return this.toExternItem(result.Attributes);
     }
 
     async query(params: DynamoQueryParams): Promise<DynamoQueryResult<T>> {
@@ -202,10 +202,14 @@ export class DynamoItem<KEY extends ItemKey, T extends ItemType> extends BaseDyn
         };
 
         if (result.Items) {
-            data.items = result.Items.map(item => item as T);
+            data.items = result.Items.map(item => this.toExternItem(item));
         }
 
         return data;
+    }
+
+    protected toExternItem(data: { [key: string]: any }) {
+        return data as T;
     }
 }
 
