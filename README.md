@@ -1,6 +1,6 @@
 # dynamo-item
 
-Simple DynamoDB data access object.
+Simple DynamoDB DAO.
 
 ## Changelog
 
