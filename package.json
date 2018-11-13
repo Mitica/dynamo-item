@@ -1,6 +1,6 @@
 {
   "name": "dynamo-item",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "DynamoDB item",
   "main": "./lib/index.js",
   "types": "./lib/index.d.ts",
@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/Mitica/dynamo-item#readme",
   "devDependencies": {
-    "@types/node": "10.12.3",
+    "@types/node": "10.12.6",
     "ava": "^0.25.0",
     "debug": "^4.1.0",
     "dynamodb-local": "^0.0.22",
@@ -45,7 +45,7 @@
     "typescript": "3.1.6"
   },
   "dependencies": {
-    "aws-sdk": "^2.351.0",
+    "aws-sdk": "^2.354.0",
     "dynamo-input": "^0.1.0"
   }
 }
